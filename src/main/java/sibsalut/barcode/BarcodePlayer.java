@@ -35,6 +35,7 @@ public class BarcodePlayer extends Stage {
     private final int width = 480;
     private final int height = 240;
     private final Boolean fullScreen;
+    private Settings settings;
 
     public BarcodePlayer(File mediaFile, Boolean fullscreen, Boolean checkAdded) {
         if (checkAdded) {
@@ -44,6 +45,7 @@ public class BarcodePlayer extends Stage {
         }
         fullScreen = fullscreen;
         setSceneSize();
+        settings =new Settings();
 
     }
 
@@ -120,7 +122,7 @@ public class BarcodePlayer extends Stage {
     }
 
     private void MediaByBarcode(String code) {
-        File file = new File("C:\\Users\\vadim\\Downloads\\small");
+        File file = new File(settings.getVideoPath()+"\\"+code+".mp4");
         initMedia(file);
         initEvents();
         setSceneSize();

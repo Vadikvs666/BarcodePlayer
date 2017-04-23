@@ -8,6 +8,7 @@ package sibsalut.barcode;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,6 +27,7 @@ import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.commons.io.FileUtils;
 
 /**
  * FXML Controller class
@@ -47,10 +49,20 @@ public class AddBarcodeFormController implements Initializable {
     private Button settingsButton;
     @FXML
     private Button convertButtons;
+    @FXML
+    private Button saveBarcodeButton;
+    @FXML
+    private Button clearBarcodeButton;
+    @FXML
+    private TextField titleTextField;
+    @FXML
+    private TextField priceTextField;
     private Stage stage;
     private Media media;
     private MediaPlayer mediaPlayer;
     private MediaView mediaView;
+    private Boolean videoOk=false;
+    private Settings settings;
     
     /**
      * Initializes the controller class.
@@ -58,10 +70,13 @@ public class AddBarcodeFormController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        
+        settings= new Settings();
     }
     @FXML
     private void onCloseButton(){
+        if(mediaPlayer!=null&&mediaPlayer.getStatus()==MediaPlayer.Status.PLAYING){
+                 mediaPlayer.stop();
+             }
         stage.close();
     }
     @FXML
@@ -91,12 +106,13 @@ public class AddBarcodeFormController implements Initializable {
     }
     @FXML
     private void OnFileChooseButton(){
+        videoOk=false;
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Выбрать видео файл");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("All Files", "*.*"));
         File fileName = fileChooser.showOpenDialog(stage);
-
+        fileNameLabel.setText(fileName.getAbsolutePath());
          try {
              if(mediaPlayer!=null&&mediaPlayer.getStatus()==MediaPlayer.Status.PLAYING){
                  mediaPlayer.stop();
@@ -106,14 +122,40 @@ public class AddBarcodeFormController implements Initializable {
             mediaView = new MediaView(mediaPlayer);
             videoPane.getChildren().clear();
             videoPane.getChildren().add(mediaView);
-            mediaView.setFitWidth(videoPane.getWidth());
-            mediaView.setFitWidth(videoPane.getHeight());
+            mediaView.setFitWidth(videoPane.getMaxWidth());
+            mediaView.setFitWidth(videoPane.getMaxHeight());
+            videoOk=true;
             mediaPlayer.play();
         } catch (MediaException ex) {
             videoPane.getChildren().clear();
             Label notSupportedVideo = new Label(" Видео не поддерживается нажмите на кнопку конвертировать");
             videoPane.getChildren().add(notSupportedVideo);
         }
+    }
+    @FXML
+    private void onSaveBarcodeButton() throws IOException{
+        if(videoOk){
+            File file = new File(fileNameLabel.getText());
+            String new_path=settings.getVideoPath()+"\\"+barcodeTextField.getText()+".mp4";
+            File dest = new File(new_path);
+            FileUtils.copyFile(file, dest);
+          //  Files.copy(file.toPath(), dest.toPath());
+        }else
+        {
+            
+        }
+    }
+    @FXML
+    private void onClearBarcodeButton(){
+        barcodeTextField.setText("");
+        fileNameLabel.setText("");
+        titleTextField.setText("");
+        priceTextField.setText("");
+        videoPane.getChildren().clear();
+        if(mediaPlayer!=null&&mediaPlayer.getStatus()==MediaPlayer.Status.PLAYING){
+                 mediaPlayer.stop();
+             }
+        videoOk=false;
     }
     public void setStage(Stage st){
         stage =st;
