@@ -22,7 +22,6 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 
-
 /**
  *
  * @author vadim
@@ -36,23 +35,29 @@ public class BarcodePlayer extends Stage {
     private final int width = 480;
     private final int height = 240;
     private final Boolean fullScreen;
+
     public BarcodePlayer(File mediaFile, Boolean fullscreen, Boolean checkAdded) {
         if (checkAdded) {
             createPlayerToCheckVideo(mediaFile);
         } else {
             createPlayerToPlayBarcodes(mediaFile);
         }
-        fullScreen=fullscreen;
+        fullScreen = fullscreen;
         setSceneSize();
-        
+
     }
-    private void setSceneSize()
-    {
+
+    public StackPane getPane() {
+        return pane;
+    }
+
+    private void setSceneSize() {
         setMinWidth(width);
         setMinHeight(height);
         setFullScreen(fullScreen);
         setFullScreenExitHint("");
     }
+
     private void initMedia(File mediaFile) {
 
         Media media = new Media(mediaFile.toURI().toString());
@@ -61,7 +66,7 @@ public class BarcodePlayer extends Stage {
         pane = new StackPane();
         pane.getChildren().add(mediaView);
         scene = new Scene(pane);
-        scene.getStylesheets().add(getClass().getResource("/styles/Styles.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/styles/bp.css").toExternalForm());
         setTitle("sibsalut");
         setScene(scene);
         mediaPlayer.play();
@@ -86,34 +91,32 @@ public class BarcodePlayer extends Stage {
         try {
             initMedia(mediaFile);
             initEvents();
-            
+
         } catch (MediaException ex) {
             initByImage();
             initEvents();
-            
+
         }
     }
 
     private void initByImage() {
         pane = new StackPane();
         scene = new Scene(pane);
-        scene.getStylesheets().add(getClass().getResource("/styles/Styles.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/styles/bp.css").toExternalForm());
         setTitle("sibsalut");
         setScene(scene);
     }
 
     private void initEvents() {
         scene.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
-            if(e.getCode()==KeyCode.ESCAPE)
-            {
+            if (e.getCode() == KeyCode.ESCAPE) {
                 close();
-            }else
-            {
+            } else {
                 MediaByBarcode(e.getText());
                 System.out.println(e.toString());
             }
         });
-        
+
     }
 
     private void MediaByBarcode(String code) {

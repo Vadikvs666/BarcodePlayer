@@ -1,6 +1,7 @@
 package sibsalut.barcode;
 
 import java.io.File;
+import java.io.IOException;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.event.ActionEvent;
@@ -18,27 +19,30 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
 
 public class MainApp extends Application {
 
     private Stage mainStage;
-    private BorderPane rootLayout;
+    private VBox rootLayout;
     private Button closeButton;
     private Button workModeButton;
+    private Button settingsButton;
 
     @Override
     public void start(Stage stage) throws Exception {
         mainStage = stage;
-        rootLayout = new BorderPane();
+        rootLayout = new VBox();
         initLayout();
 
     }
 
     private void initLayout() {
 
-        rootLayout.setRight(new BarcodeAddForm(mainStage));
+        rootLayout.getChildren().add(new BarcodeAddForm(mainStage));
         initBottomButtons();
         Scene scene = new Scene(this.rootLayout);
         this.mainStage.setTitle("Добавление штрих-кода");
@@ -48,6 +52,10 @@ public class MainApp extends Application {
 
     private void initBottomButtons() {
         closeButton = new Button(" Закрыть ");
+        settingsButton = new Button(" Настройки ");
+        settingsButton.setOnAction((e) -> {
+            showSettingForm();
+        });
         closeButton.setOnAction((e) -> {
             closeAction(e);
         });
@@ -59,19 +67,19 @@ public class MainApp extends Application {
         HBox hb = new HBox();
         hb.setPadding(new Insets(0, 5, 5, 5));
         hb.setSpacing(10);
-        hb.getChildren().addAll(workModeButton, closeButton);
+        hb.getChildren().addAll(workModeButton,settingsButton, closeButton);
         anchorPane.getChildren().add(hb);   // Add grid from Example 1-5
         anchorPane.setBottomAnchor(hb, 5.0);
         anchorPane.setRightAnchor(hb, 5.0);
         anchorPane.setTopAnchor(hb, 10.0);
-        rootLayout.setBottom(anchorPane);
+        rootLayout.getChildren().add(anchorPane);
 
     }
 
     private void workMode() {
 
         File mediaFile = new File("skin.jpg");
-        BarcodePlayer bp = new BarcodePlayer(mediaFile,true,false);
+        BarcodePlayer bp = new BarcodePlayer(mediaFile, true, false);
         bp.show();
     }
 
@@ -87,6 +95,37 @@ public class MainApp extends Application {
             }
         });
 
+    }
+
+    private void showSettingForm() {
+        try {
+            // Загружаем fxml-файл и создаём новую сцену
+            // для всплывающего диалогового окна.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("/fxml/SettingsForm.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+
+            // Создаём диалоговое окно Stage.
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Настройки");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(mainStage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            // Передаём адресата в контроллер.
+            SettingsFormController controller = loader.getController();
+            controller.setStage(dialogStage);
+          
+
+            // Отображаем диалоговое окно и ждём, пока пользователь его не закроет
+            dialogStage.showAndWait();
+
+         
+        } catch (IOException e) {
+            e.printStackTrace();
+           
+        }
     }
 
     /**
