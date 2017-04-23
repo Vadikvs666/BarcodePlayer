@@ -31,6 +31,7 @@ public class MainApp extends Application {
     private Button closeButton;
     private Button workModeButton;
     private Button settingsButton;
+    private Button addBarcodeButton;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -42,10 +43,10 @@ public class MainApp extends Application {
 
     private void initLayout() {
 
-        rootLayout.getChildren().add(new BarcodeAddForm(mainStage));
+       // rootLayout.getChildren().add(new BarcodeAddForm(mainStage));
         initBottomButtons();
         Scene scene = new Scene(this.rootLayout);
-        this.mainStage.setTitle("Добавление штрих-кода");
+        this.mainStage.setTitle("Сибирский салют");
         this.mainStage.setScene(scene);
         this.mainStage.show();
     }
@@ -63,11 +64,15 @@ public class MainApp extends Application {
         workModeButton.setOnAction((e) -> {
             workMode();
         });
+        addBarcodeButton = new Button(" Добавить ");
+        addBarcodeButton.setOnAction((e)->{
+            showAddBarcodeForm();
+        });
         AnchorPane anchorPane = new AnchorPane();
         HBox hb = new HBox();
         hb.setPadding(new Insets(0, 5, 5, 5));
         hb.setSpacing(10);
-        hb.getChildren().addAll(workModeButton,settingsButton, closeButton);
+        hb.getChildren().addAll(addBarcodeButton,workModeButton,settingsButton, closeButton);
         anchorPane.getChildren().add(hb);   // Add grid from Example 1-5
         anchorPane.setBottomAnchor(hb, 5.0);
         anchorPane.setRightAnchor(hb, 5.0);
@@ -115,6 +120,36 @@ public class MainApp extends Application {
 
             // Передаём адресата в контроллер.
             SettingsFormController controller = loader.getController();
+            controller.setStage(dialogStage);
+          
+
+            // Отображаем диалоговое окно и ждём, пока пользователь его не закроет
+            dialogStage.showAndWait();
+
+         
+        } catch (IOException e) {
+            e.printStackTrace();
+           
+        }
+    }
+    private void showAddBarcodeForm(){
+        try {
+            // Загружаем fxml-файл и создаём новую сцену
+            // для всплывающего диалогового окна.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("/fxml/addBarcodeForm.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+
+            // Создаём диалоговое окно Stage.
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Настройки");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(mainStage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            // Передаём адресата в контроллер.
+            AddBarcodeFormController controller = loader.getController();
             controller.setStage(dialogStage);
           
 
