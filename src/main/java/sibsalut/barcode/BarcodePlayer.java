@@ -45,7 +45,7 @@ public class BarcodePlayer extends Stage {
         }
         fullScreen = fullscreen;
         setSceneSize();
-        settings =new Settings();
+        settings = new Settings();
 
     }
 
@@ -61,7 +61,9 @@ public class BarcodePlayer extends Stage {
     }
 
     private void initMedia(File mediaFile) {
-
+        if (mediaPlayer != null && mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+            mediaPlayer.stop();
+        }
         Media media = new Media(mediaFile.toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         mediaView = new MediaView(mediaPlayer);
@@ -122,7 +124,7 @@ public class BarcodePlayer extends Stage {
     }
 
     private void MediaByBarcode(String code) {
-        File file = new File(settings.getVideoPath()+File.separator+code+".mp4");
+        File file = new File(settings.getVideoPath() + File.separator + code + ".mp4");
         initMedia(file);
         initEvents();
         setSceneSize();
