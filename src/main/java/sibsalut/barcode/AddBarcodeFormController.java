@@ -81,7 +81,19 @@ public class AddBarcodeFormController implements Initializable {
     }
     @FXML
     private void onConvertButton(){
-        
+        ShellCommand shell =new ShellCommand();
+        shell.setCommand(settings.getFfmpegPath());
+        String[] options={
+            "-i",
+            fileNameLabel.getText(),
+            "-strict experimental",
+            "-y",
+            "-f",
+            "mp4",
+            settings.getVideoPath()+File.separator+barcodeTextField.getText()+".mp4"
+        };
+        shell.setOptions(options);
+        shell.execute();
     }
     @FXML
     private void onSettingsButton(){
