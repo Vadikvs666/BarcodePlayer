@@ -136,10 +136,10 @@ public class AddBarcodeFormController implements Initializable {
     private void onSaveBarcodeButton() throws IOException{
         if(videoOk){
             File file = new File(fileNameLabel.getText());
-            String new_path=settings.getVideoPath()+"\\"+barcodeTextField.getText()+".mp4";
+            String new_path=settings.getVideoPath()+File.separator+barcodeTextField.getText()+".mp4";
             File dest = new File(new_path);
             FileUtils.copyFile(file, dest);
-          //  Files.copy(file.toPath(), dest.toPath());
+
         }else
         {
             

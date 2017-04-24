@@ -122,7 +122,7 @@ public class BarcodePlayer extends Stage {
     }
 
     private void MediaByBarcode(String code) {
-        File file = new File(settings.getVideoPath()+"\\"+code+".mp4");
+        File file = new File(settings.getVideoPath()+File.separator+code+".mp4");
         initMedia(file);
         initEvents();
         setSceneSize();
