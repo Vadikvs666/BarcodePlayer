@@ -7,6 +7,7 @@ package sibsalut.barcode;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -77,13 +78,48 @@ public class Database {
             }
        
     }
-    public Barcode selectByBarcode(String barcode){
-        
-        return new Barcode();
+    public Barcode selectByBarcode(String code){
+        Barcode barcode =new Barcode();
+        String sql = "SELECT * "
+                          + "FROM barcode WHERE barcode = ?";
+        try{
+            final PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, code);
+            ResultSet rs  = pstmt.executeQuery();
+            rs.next();
+            barcode.setBarcode(rs.getString("barcode"));
+            barcode.setCount(rs.getInt("count"));
+            barcode.setId(rs.getInt("id"));
+            barcode.setPrice(rs.getDouble("price"));
+            barcode.setTitle(rs.getString("title"));
+            barcode.setVideo(rs.getString("video"));
+            
+        }catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        return barcode;
     }
     public Barcode selectById(int id){
         
-        return new Barcode();
+        Barcode barcode =new Barcode();
+        String sql = "SELECT * "
+                          + "FROM barcode WHERE id = ?";
+        try{
+            final PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, id);
+            ResultSet rs  = pstmt.executeQuery();
+            rs.next();
+            barcode.setBarcode(rs.getString("barcode"));
+            barcode.setCount(rs.getInt("count"));
+            barcode.setId(rs.getInt("id"));
+            barcode.setPrice(rs.getDouble("price"));
+            barcode.setTitle(rs.getString("title"));
+            barcode.setVideo(rs.getString("video"));
+            
+        }catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        return barcode;
     }
     public ArrayList<Barcode> select()
     {
@@ -91,7 +127,19 @@ public class Database {
         return list;
     }
     public void update(Barcode barcode){
-        
+        String sql = "UPDATE barcode SET title=?, price=?, count=?, video=? "
+                + "WHRERE barcode=?";
+        try{
+            final PreparedStatement pStmtt = conn.prepareStatement(sql);
+            pStmtt.setString(1, barcode.getTitle());
+            pStmtt.setDouble(2, barcode.getPrice());
+            pStmtt.setInt(3, barcode.getCount());
+            pStmtt.setString(4, barcode.getVideo());
+            pStmtt.setString(5, barcode.getBarcode());
+            pStmtt.execute();
+        }catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
     }
     public void delete(Barcode barcode){
         

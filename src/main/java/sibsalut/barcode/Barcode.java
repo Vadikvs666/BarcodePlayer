@@ -39,7 +39,12 @@ public class Barcode {
     }
 
     Barcode() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.id = 0;
+        this.barcode = "";
+        this.title = "";
+        this.price = 0;
+        this.count = 0;
+        this.video = "";
     }
     
     
