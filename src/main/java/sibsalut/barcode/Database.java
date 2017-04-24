@@ -6,8 +6,11 @@ package sibsalut.barcode;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -53,10 +56,44 @@ public class Database {
             try {
                 Statement stmt = conn.createStatement();
                 Boolean res=stmt.execute(sql);
-                System.out.println("Executed sql: \n"+sql+"\n Result="+String.valueOf(res));
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
         }
+    }
+    public void insert(Barcode barcode){
+        String sql = "INSERT INTO barcode (barcode, title, price, count, video) "
+                + "VALUES(?, ?, ?, ?, ?, )";
+        try{
+            final PreparedStatement pStmtt = conn.prepareStatement(sql);
+            pStmtt.setString(1, barcode.getBarcode());
+            pStmtt.setString(2, barcode.getTitle());
+            pStmtt.setString(3, String.valueOf(barcode.getPrice()));
+            pStmtt.setString(4, String.valueOf(barcode.getCount()));
+            pStmtt.setString(5, barcode.getVideo());
+            pStmtt.execute();
+        }catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+       
+    }
+    public Barcode selectByBarcode(String barcode){
+        
+        return new Barcode();
+    }
+    public Barcode selectById(int id){
+        
+        return new Barcode();
+    }
+    public ArrayList<Barcode> select()
+    {
+        ArrayList<Barcode> list = new ArrayList<Barcode>();
+        return list;
+    }
+    public void update(Barcode barcode){
+        
+    }
+    public void delete(Barcode barcode){
+        
     }
 }
