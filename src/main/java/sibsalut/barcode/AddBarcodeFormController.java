@@ -63,6 +63,7 @@ public class AddBarcodeFormController implements Initializable {
     private MediaView mediaView;
     private Boolean videoOk=false;
     private Settings settings;
+    private Database base;
     
     /**
      * Initializes the controller class.
@@ -71,6 +72,7 @@ public class AddBarcodeFormController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         settings= new Settings();
+        base = Database.getInstance();
     }
     @FXML
     private void onCloseButton(){
