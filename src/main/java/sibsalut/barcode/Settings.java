@@ -15,9 +15,9 @@ import javafx.beans.property.StringProperty;
  */
 public class Settings {
 
-    private final StringProperty videoPath;
-    private final StringProperty ffmpegPath;
-    private final StringProperty ffmpegOptions;
+    private StringProperty videoPath;
+    private StringProperty ffmpegPath;
+    private StringProperty ffmpegOptions;
 
     public String getFfmpegOptions() {
         return ffmpegOptions.get();
@@ -35,7 +35,7 @@ public class Settings {
         videoPath.set(video);
         save();
     }
-    
+
     public void setFfmpegOptions(String opt) {
         videoPath.set(opt);
         save();
@@ -47,11 +47,9 @@ public class Settings {
     }
 
     public Settings() {
-        videoPath = new SimpleStringProperty("video");
-        ffmpegPath = new SimpleStringProperty("ffmpeg");
-        ffmpegOptions =new SimpleStringProperty("-strict experimental -b:v 555k -b:a 32k -y -f mp4");
+        init();
         load();
-    }    
+    }
 
     public void save() {
         Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
@@ -65,7 +63,7 @@ public class Settings {
         String video = prefs.get("videoPath", null);
         String ffmpeg = prefs.get("ffmpegPath", null);
         String opt = prefs.get("ffmpegOptions", null);
-        if (video != null&& ffmpeg!=null && opt!=null) {
+        if (video != null && ffmpeg != null && opt != null) {
             setFfmpegPath(ffmpeg);
             setVideoPath(video);
             setFfmpegOptions(opt);
@@ -73,9 +71,18 @@ public class Settings {
         } else {
             return false;
         }
-        
+
     }
     
-   
+    public void reset(){
+        init();
+        save();
+    }
+
+    private void init() {
+        videoPath = new SimpleStringProperty("video");
+        ffmpegPath = new SimpleStringProperty("ffmpeg");
+        ffmpegOptions = new SimpleStringProperty("-strict experimental -b:v 555k -b:a 32k -y -f mp4");
+    }
 
 }
