@@ -93,10 +93,11 @@ public class AddBarcodeFormController implements Initializable {
 
     @FXML
     private void onConvertButton() throws IOException {
+        
         File file = new File(fileNameLabel.getText());      
         String newFileName = settings.getVideoPath() + File.separator + barcodeTextField.getText() + ".mp4";
         fileNameLabel.setText(newFileName);
-        Ffmpeg ff=new Ffmpeg(file, newFileName);
+        Ffmpeg ff=new Ffmpeg(file, barcodeTextField.getText());
         videoOk = true;
         setChanged();
     }
