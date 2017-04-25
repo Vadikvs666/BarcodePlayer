@@ -66,6 +66,7 @@ public class AddBarcodeFormController implements Initializable {
     private Settings settings;
     private Database base;
     private Barcode barcode;
+    private Boolean changed;
     
     /**
      * Initializes the controller class.
@@ -76,6 +77,7 @@ public class AddBarcodeFormController implements Initializable {
         settings= new Settings();
         base = Database.getInstance();
         barcode =new Barcode();
+        changed=false;
     }
     @FXML
     private void onCloseButton(){
@@ -105,6 +107,7 @@ public class AddBarcodeFormController implements Initializable {
         shell.getError();
         fileNameLabel.setText(newFileName);
         videoOk=true;
+        setChanged();
         //barcode.setVideo(newFileName);
     }
     @FXML
@@ -149,6 +152,7 @@ public class AddBarcodeFormController implements Initializable {
             mediaView.setFitWidth(videoPane.getMaxWidth());
             mediaView.setFitWidth(videoPane.getMaxHeight());
             videoOk=true;
+            setChanged();
             mediaPlayer.play();
         } catch (MediaException ex) {
             videoPane.getChildren().clear();
@@ -165,7 +169,7 @@ public class AddBarcodeFormController implements Initializable {
             FileUtils.copyFile(file, dest);*/
             setBarcodeBycontrols();
             base.insert(barcode);
-
+            setNoChange();
         }else
         {
             
@@ -176,9 +180,31 @@ public class AddBarcodeFormController implements Initializable {
         barcode=base.selectByBarcode(barcodeTextField.getText());
         if(barcode.getBarcode()!=""){
             setControlsByEntity();
+            
+        }else{
+            setChanged();
         }
+  
+    }
+    
+    @FXML
+    private void titleTextChanged(){
         
+            setChanged();
+    
+    }
+    @FXML
+    private void priceTextChanged(){
         
+            setChanged();
+    
+    }
+    
+    @FXML
+    private void textChanged(){
+        
+            setChanged();
+    
     }
     @FXML
     private void onClearBarcodeButton(){
@@ -191,6 +217,7 @@ public class AddBarcodeFormController implements Initializable {
                  mediaPlayer.stop();
              }
         videoOk=false;
+        setChanged();
     }
     public void setStage(Stage st){
         stage =st;
@@ -213,5 +240,13 @@ public class AddBarcodeFormController implements Initializable {
             price=0.0;
         }
         barcode.setPrice(price);
+    }
+    private void setChanged(){
+        changed=true;
+        saveBarcodeButton.setText("Сохранить*");
+    }
+    private void setNoChange(){
+        changed=false;
+        saveBarcodeButton.setText("Сохранить*");
     }
 }
