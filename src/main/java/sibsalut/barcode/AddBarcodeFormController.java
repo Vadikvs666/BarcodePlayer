@@ -86,28 +86,27 @@ public class AddBarcodeFormController implements Initializable {
     }
     @FXML
     private void onConvertButton() throws IOException{
+        File file = new File(fileNameLabel.getText());
+        String copyed_file=settings.getVideoPath()+File.separator+barcodeTextField.getText()+"-not_converted";
+        String newFileName=settings.getVideoPath()+File.separator+barcodeTextField.getText()+".mp4";
+        File dest = new File(copyed_file);
+        FileUtils.copyFile(file, dest);
         ShellCommand shell =new ShellCommand();
         shell.setCommand(settings.getFfmpegPath());
-        String newFileName=settings.getVideoPath()+File.separator+barcodeTextField.getText()+".mp4";
         String[] options={
             "-i",
-            "'"+fileNameLabel.getText()+"'",
+            copyed_file,
             "-strict experimental",
-            "-b:v 555k",
-            "-b:a 36k",
+            "-b:v 555k -b:a 32k ",
             "-y",
             "-f",
             "mp4",
             newFileName
         };
-        
         shell.setOptions(options);
         shell.execute();
-        /*BufferedReader er=shell.getOutPut();
-        String str;
-        while((str=er.readLine())!=null){
-            System.out.println(str);
-        }*/
+        shell.getOutPut();
+        shell.getError();
         fileNameLabel.setText(newFileName);
         videoOk=true;
         //barcode.setVideo(newFileName);
@@ -179,7 +178,9 @@ public class AddBarcodeFormController implements Initializable {
     @FXML
     private void barcodeTextChanged(){
         barcode=base.selectByBarcode(barcodeTextField.getText());
-        fileNameLabel.setText(barcode.getVideo());
+        if(barcode.getBarcode()!=""){
+            setControlsByEntity();
+        }
         
         
     }
@@ -203,6 +204,7 @@ public class AddBarcodeFormController implements Initializable {
         fileNameLabel.setText(barcode.getVideo());
         titleTextField.setText(barcode.getTitle());
         priceTextField.setText(String.valueOf(barcode.getPrice()));
+        videoOk=true;
     }
     private void setBarcodeBycontrols(){
         barcode.setBarcode(barcodeTextField.getText());

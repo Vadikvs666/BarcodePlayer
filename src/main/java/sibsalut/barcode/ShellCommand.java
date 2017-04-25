@@ -7,6 +7,7 @@ package sibsalut.barcode;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 /**
  *
@@ -30,9 +31,10 @@ public class ShellCommand{
     public Boolean execute() {
         try {
             String shell = build();
+            System.out.println("Executed command: "+shell);
             Process p = Runtime.getRuntime().exec(shell);
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            stdOutput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
             return true;
 
         } catch (IOException e) {
@@ -51,21 +53,21 @@ public class ShellCommand{
         return shellCommand;
     }
 
-    public BufferedReader getOutPut() throws IOException {
+    public void getOutPut() throws IOException {
         String s;
         System.out.println("Here is the standard output of the command:\n");
         while ((s = stdOutput.readLine()) != null) {
             System.out.println(s);
         }
-        return stdOutput;
+        
     }
 
-    public BufferedReader getError() throws IOException {
+    public void getError() throws IOException {
         String s;
         System.out.println("Here is the standard error of the command (if any):\n");
         while ((s = stdError.readLine()) != null) {
             System.out.println(s);
         }
-        return stdError;
+        
     }
 }
