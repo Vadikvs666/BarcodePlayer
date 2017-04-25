@@ -37,7 +37,7 @@ public class Settings {
     }
 
     public void setFfmpegOptions(String opt) {
-        videoPath.set(opt);
+        ffmpegOptions.set(opt);
         save();
     }
 
