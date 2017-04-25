@@ -96,11 +96,7 @@ public class AddBarcodeFormController implements Initializable {
         String[] options={
             "-i",
             copyed_file,
-            "-strict experimental",
-            "-b:v 555k -b:a 32k ",
-            "-y",
-            "-f",
-            "mp4",
+            settings.getFfmpegOptions(),
             newFileName
         };
         shell.setOptions(options);

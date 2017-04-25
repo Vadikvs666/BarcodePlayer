@@ -17,6 +17,11 @@ public class Settings {
 
     private final StringProperty videoPath;
     private final StringProperty ffmpegPath;
+    private final StringProperty ffmpegOptions;
+
+    public String getFfmpegOptions() {
+        return ffmpegOptions.get();
+    }
 
     public String getVideoPath() {
         return videoPath.get();
@@ -30,6 +35,11 @@ public class Settings {
         videoPath.set(video);
         save();
     }
+    
+    public void setFfmpegOptions(String opt) {
+        videoPath.set(opt);
+        save();
+    }
 
     public void setFfmpegPath(String ffmpeg) {
         ffmpegPath.set(ffmpeg);
@@ -39,6 +49,7 @@ public class Settings {
     public Settings() {
         videoPath = new SimpleStringProperty("video");
         ffmpegPath = new SimpleStringProperty("ffmpeg");
+        ffmpegOptions =new SimpleStringProperty("-strict experimental -b:v 555k -b:a 32k -y -f mp4");
         load();
     }    
 
@@ -46,15 +57,18 @@ public class Settings {
         Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
         prefs.put("videoPath", getVideoPath());
         prefs.put("ffmpegPath", getFfmpegPath());
+        prefs.put("ffmpegOptions", getFfmpegOptions());
     }
 
     private Boolean load() {
         Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
         String video = prefs.get("videoPath", null);
         String ffmpeg = prefs.get("ffmpegPath", null);
-        if (video != null&& ffmpeg!=null) {
+        String opt = prefs.get("ffmpegOptions", null);
+        if (video != null&& ffmpeg!=null && opt!=null) {
             setFfmpegPath(ffmpeg);
             setVideoPath(video);
+            setFfmpegOptions(opt);
             return true;
         } else {
             return false;
