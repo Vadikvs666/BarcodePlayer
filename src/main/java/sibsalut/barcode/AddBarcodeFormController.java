@@ -5,6 +5,7 @@
  */
 package sibsalut.barcode;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -64,6 +65,7 @@ public class AddBarcodeFormController implements Initializable {
     private Boolean videoOk=false;
     private Settings settings;
     private Database base;
+    private Barcode barcode;
     
     /**
      * Initializes the controller class.
@@ -73,6 +75,7 @@ public class AddBarcodeFormController implements Initializable {
         // TODO
         settings= new Settings();
         base = Database.getInstance();
+        barcode =new Barcode();
     }
     @FXML
     private void onCloseButton(){
@@ -82,20 +85,32 @@ public class AddBarcodeFormController implements Initializable {
         stage.close();
     }
     @FXML
-    private void onConvertButton(){
+    private void onConvertButton() throws IOException{
         ShellCommand shell =new ShellCommand();
         shell.setCommand(settings.getFfmpegPath());
+        String newFileName=settings.getVideoPath()+File.separator+barcodeTextField.getText()+".mp4";
         String[] options={
             "-i",
-            fileNameLabel.getText(),
+            "'"+fileNameLabel.getText()+"'",
             "-strict experimental",
+            "-b:v 555k",
+            "-b:a 36k",
             "-y",
             "-f",
             "mp4",
-            settings.getVideoPath()+File.separator+barcodeTextField.getText()+".mp4"
+            newFileName
         };
+        
         shell.setOptions(options);
         shell.execute();
+        /*BufferedReader er=shell.getOutPut();
+        String str;
+        while((str=er.readLine())!=null){
+            System.out.println(str);
+        }*/
+        fileNameLabel.setText(newFileName);
+        videoOk=true;
+        //barcode.setVideo(newFileName);
     }
     @FXML
     private void onSettingsButton(){
@@ -149,15 +164,24 @@ public class AddBarcodeFormController implements Initializable {
     @FXML
     private void onSaveBarcodeButton() throws IOException{
         if(videoOk){
-            File file = new File(fileNameLabel.getText());
+            /*File file = new File(fileNameLabel.getText());
             String new_path=settings.getVideoPath()+File.separator+barcodeTextField.getText()+".mp4";
             File dest = new File(new_path);
-            FileUtils.copyFile(file, dest);
+            FileUtils.copyFile(file, dest);*/
+            setBarcodeBycontrols();
+            base.insert(barcode);
 
         }else
         {
             
         }
+    }
+    @FXML
+    private void barcodeTextChanged(){
+        barcode=base.selectByBarcode(barcodeTextField.getText());
+        fileNameLabel.setText(barcode.getVideo());
+        
+        
     }
     @FXML
     private void onClearBarcodeButton(){
@@ -174,5 +198,22 @@ public class AddBarcodeFormController implements Initializable {
     public void setStage(Stage st){
         stage =st;
     }
-    
+    private void setControlsByEntity(){
+        barcodeTextField.setText(barcode.getBarcode());
+        fileNameLabel.setText(barcode.getVideo());
+        titleTextField.setText(barcode.getTitle());
+        priceTextField.setText(String.valueOf(barcode.getPrice()));
+    }
+    private void setBarcodeBycontrols(){
+        barcode.setBarcode(barcodeTextField.getText());
+        barcode.setVideo(fileNameLabel.getText());
+        barcode.setTitle(titleTextField.getText());
+        Double price=0.0;
+        try{
+            price=Double.valueOf(priceTextField.getText());
+        }catch(NumberFormatException exp){
+            price=0.0;
+        }
+        barcode.setPrice(price);
+    }
 }

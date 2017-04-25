@@ -64,7 +64,7 @@ public class Database {
     }
     public void insert(Barcode barcode){
         String sql = "INSERT INTO barcode (barcode, title, price, count, video) "
-                + "VALUES(?, ?, ?, ?, ?, )";
+                + "VALUES(?, ?, ?, ?, ? )";
         try{
             final PreparedStatement pStmtt = conn.prepareStatement(sql);
             pStmtt.setString(1, barcode.getBarcode());
@@ -81,7 +81,7 @@ public class Database {
     public Barcode selectByBarcode(String code){
         Barcode barcode =new Barcode();
         String sql = "SELECT * "
-                          + "FROM barcode WHERE barcode = ?";
+                          + "FROM barcode WHERE barcode = ? ORDER BY id DESC";
         try{
             final PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, code);
