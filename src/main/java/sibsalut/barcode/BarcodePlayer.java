@@ -7,6 +7,7 @@ package sibsalut.barcode;
 
 import java.io.File;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -130,6 +131,13 @@ public class BarcodePlayer extends Stage {
         //  File file = new File(settings.getVideoPath() + File.separator + code + ".mp4");
         File file = new File(barcode.getVideo());
         initMedia(file);
+        Label title =new Label(barcode.getTitle());
+        title.setId("labeltext");
+        Label price =new Label("Цена: "+String.valueOf(barcode.getPrice())+" руб.");
+        price.setId("labeltext");
+        pane.getChildren().addAll(title,price);
+        pane.setAlignment(title,Pos.TOP_LEFT);
+        pane.setAlignment(price,Pos.BOTTOM_RIGHT);
         initEvents();
         setSceneSize();
     }

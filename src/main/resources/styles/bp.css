@@ -1,3 +1,8 @@
 .root {
     -fx-background-image: url("../images/skin.jpg");
 }
+#labeltext {
+    -fx-font: 48px Verdana;
+    -fx-text-fill: white;
+  
+}
