@@ -29,7 +29,7 @@ import javafx.stage.Stage;
 public class BarcodePlayer extends Stage {
 
     private Scene scene;
-    private AnchorPane pane;
+    private StackPane pane;
     private MediaPlayer mediaPlayer;
     private MediaView mediaView;
     private final int width = 480;
@@ -51,7 +51,7 @@ public class BarcodePlayer extends Stage {
 
     }
 
-    public AnchorPane getPane() {
+    public StackPane getPane() {
         return pane;
     }
 
@@ -69,7 +69,7 @@ public class BarcodePlayer extends Stage {
         Media media = new Media(mediaFile.toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         mediaView = new MediaView(mediaPlayer);
-        pane = new AnchorPane();
+        pane = new StackPane();
         pane.getChildren().add(mediaView);
         scene = new Scene(pane);
         scene.getStylesheets().add(getClass().getResource("/styles/bp.css").toExternalForm());
@@ -106,7 +106,7 @@ public class BarcodePlayer extends Stage {
     }
 
     private void initByImage() {
-        pane = new AnchorPane();
+        pane = new StackPane();
         scene = new Scene(pane);
         scene.getStylesheets().add(getClass().getResource("/styles/bp.css").toExternalForm());
         setTitle("sibsalut");
@@ -135,7 +135,7 @@ public class BarcodePlayer extends Stage {
     }
 
     private void showNotSupportedForm() {
-        pane = new AnchorPane();
+        pane = new StackPane();
         Button closeButton = new Button(" Закрыть ");
         closeButton.setOnAction((e) -> {
             close();

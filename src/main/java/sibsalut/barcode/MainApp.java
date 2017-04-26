@@ -142,7 +142,7 @@ public class MainApp extends Application {
 
             // Создаём диалоговое окно Stage.
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("");
+            dialogStage.setTitle("Настройки");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(mainStage);
             Scene scene = new Scene(page);
