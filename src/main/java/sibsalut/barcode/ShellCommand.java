@@ -7,13 +7,13 @@ package sibsalut.barcode;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
+
 
 /**
  *
  * @author vadim
  */
-public class ShellCommand{
+public class ShellCommand {
 
     private String command;
     private String[] options;
@@ -31,7 +31,7 @@ public class ShellCommand{
     public Boolean execute() {
         try {
             String shell = build();
-            System.out.println("Executed command: "+shell);
+            System.out.println("Executed command: " + shell);
             Process p = Runtime.getRuntime().exec(shell);
             stdOutput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
@@ -53,21 +53,28 @@ public class ShellCommand{
         return shellCommand;
     }
 
-    public void getOutPut() throws IOException {
-        String s;
-        System.out.println("Here is the standard output of the command:\n");
-        while ((s = stdOutput.readLine()) != null) {
-            System.out.println(s);
+    public void getOutPut() {
+        try {
+            String s;
+            System.out.println("Here is the standard output of the command:\n");
+            while ((s = stdOutput.readLine()) != null) {
+                System.out.println(s);
+            }
+        } catch (IOException e) {
+
         }
-        
     }
 
-    public void getError() throws IOException {
-        String s;
-        System.out.println("Here is the standard error of the command (if any):\n");
-        while ((s = stdError.readLine()) != null) {
-            System.out.println(s);
+    public void getError() {
+        try {
+            String s;
+            System.out.println("Here is the standard error of the command (if any):\n");
+            while ((s = stdError.readLine()) != null) {
+                System.out.println(s);
+            }
+        } catch (IOException e) {
+
         }
-        
+
     }
 }

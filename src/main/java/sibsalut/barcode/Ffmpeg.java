@@ -14,20 +14,27 @@ import org.apache.commons.io.FileUtils;
  *
  * @author vadim
  */
-public class Ffmpeg  implements Runnable{
+public class Ffmpeg implements Runnable {
+
     private Thread thread;
-    private ShellCommand command;
-    private File file;
+    private final File file;
+    private final String barcode;
     private Settings settings;
-    private String barcode;
-    
-    public Ffmpeg(File inputFile,String code){
-        file=inputFile;
-        barcode=code;
-        thread = new Thread(this, "ffmpeg");
-        thread.start();
-        settings =new Settings();
+    private SignalSlots ss;
+
+    public Ffmpeg(File inputFile, String code) {
+        file = inputFile;
+        barcode = code;
+        settings = new Settings();
+        ss = SignalSlots.getInstance();
     }
+
+    public void start() {
+        thread = new Thread(this);
+        thread.start();
+
+    }
+
     @Override
     public void run() {
         String copyed_file = settings.getVideoPath() + File.separator + barcode + "-not_converted";
@@ -48,6 +55,9 @@ public class Ffmpeg  implements Runnable{
         };
         shell.setOptions(options);
         shell.execute();
+        shell.getOutPut();
+        shell.getError();
+        ss.emit(this, "complete");
     }
-    
+
 }

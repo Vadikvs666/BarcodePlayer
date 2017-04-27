@@ -4,7 +4,11 @@
  */
 package sibsalut.barcode;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 
 /**
  *
@@ -52,7 +56,7 @@ class SignalConnectorStruct {
 
 class Connections {
 
-    private List<SignalConnectorStruct> connects;
+    private ArrayList<SignalConnectorStruct> connects;
 
     public void add(SignalConnectorStruct scs) {
         connects.add(scs);
@@ -62,8 +66,8 @@ class Connections {
         connects.remove(scs);
     }
 
-    public List<SignalConnectorStruct> find(Object sen, String signal) {
-        List<SignalConnectorStruct> list = null;
+    public ArrayList<SignalConnectorStruct> find(Object sen, String signal) {
+        ArrayList<SignalConnectorStruct> list = new ArrayList<>();
         for (SignalConnectorStruct entry : connects) {
             if (entry.getSender() == sen && entry.getSignal() == signal) {
                 list.add(entry);
@@ -72,30 +76,71 @@ class Connections {
         return list;
 
     }
+
+    public Connections() {
+        connects = new ArrayList();
+    }
 }
 
 public class SignalSlots {
 
-    private Connections connections;
+    private static SignalSlots instance;
+    private Connections connections = null;
+
+    public static synchronized SignalSlots getInstance() {
+        if (instance == null) {
+            instance = new SignalSlots();
+
+        }
+        return instance;
+    }
 
     public void connect(Object sender, String signal, Object reciever, String slot) {
+        if (connections == null) {
+            connections = new Connections();
+        }
         SignalConnectorStruct connector = new SignalConnectorStruct();
         connector.setSender(sender);
         connector.setSignal(signal);
         connector.setReciever(reciever);
         connector.setSlot(slot);
+        System.out.println("Connect signal: " + signal + " with slot " + slot);
+        connections.add(connector);
     }
 
-    public void emit(Object sender, String signal) throws NoSuchMethodException {
-        List<SignalConnectorStruct> conn = connections.find(sender, signal);
-        if (conn != null) {
-            for (SignalConnectorStruct entry : conn) {
+    public void emit(Object sender, String signal) {
+        ArrayList<SignalConnectorStruct> conn = new ArrayList();
+        if (connections != null) {
+            conn = connections.find(sender, signal);
+            if (conn != null) {
+                for (SignalConnectorStruct entry : conn) {
+                    System.out.println("emit signal: " + signal + " founded slot " + entry.getSlot());
                     invokeSlot(entry.getReciever(), entry.getSlot());
+                }
+            }else{
+               System.out.println("emit signal: " + signal + " no slot founds " ); 
             }
+        }else{
+            System.out.println("emit signal: " + signal + "No connects");
         }
+
     }
 
-    private void invokeSlot(Object rec, String slot) throws NoSuchMethodException {
-        rec.getClass().getDeclaredMethod(slot);
+    private void invokeSlot(Object rec, String slot) {
+        try {
+            Task task = new Task() {
+                @Override
+                protected Object call() throws Exception {
+                    Object[] args = new Object[]{};
+                    rec.getClass().getDeclaredMethod(slot).invoke(rec, args);
+                    System.out.println("invoke slot " + slot);
+                    return null;
+                }
+            };
+            Platform.runLater(task);
+        } catch (IllegalArgumentException | SecurityException ex) {
+            Logger.getLogger(SignalSlots.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 }

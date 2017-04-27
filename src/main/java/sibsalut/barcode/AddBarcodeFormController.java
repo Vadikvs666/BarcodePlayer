@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -70,6 +72,7 @@ public class AddBarcodeFormController implements Initializable {
     private Database base;
     private Barcode barcode;
     private Boolean changed;
+    private SignalSlots ss;
 
     /**
      * Initializes the controller class.
@@ -81,6 +84,7 @@ public class AddBarcodeFormController implements Initializable {
         base = Database.getInstance();
         barcode = new Barcode();
         changed = false;
+        ss = SignalSlots.getInstance();
     }
 
     @FXML
@@ -92,14 +96,22 @@ public class AddBarcodeFormController implements Initializable {
     }
 
     @FXML
-    private void onConvertButton() throws IOException {
-        
-        File file = new File(fileNameLabel.getText());      
+    private void onConvertButton() {
+
+        File file = new File(fileNameLabel.getText());
         String newFileName = settings.getVideoPath() + File.separator + barcodeTextField.getText() + ".mp4";
         fileNameLabel.setText(newFileName);
-        Ffmpeg ff=new Ffmpeg(file, barcodeTextField.getText());
+        Ffmpeg ff = new Ffmpeg(file, barcodeTextField.getText());
+        ss.connect(ff, "complete", this, "slotOnFgmpegComplete");
+        ff.start();
         videoOk = true;
         setChanged();
+    }
+
+    protected void slotOnFgmpegComplete() {
+        File file = new File(fileNameLabel.getText());
+        playVideo(file);
+        System.out.println("video ok");
     }
 
     @FXML
@@ -107,7 +119,9 @@ public class AddBarcodeFormController implements Initializable {
         try {
 
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("/fxml/SettingsForm.fxml"));
+            loader
+                    .setLocation(MainApp.class
+                            .getResource("/fxml/SettingsForm.fxml"));
             AnchorPane page = (AnchorPane) loader.load();
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Настройки");
@@ -240,7 +254,7 @@ public class AddBarcodeFormController implements Initializable {
     private void playVideo(File fileName) {
         try {
             stopVideo();
-            videoOk=true;
+            videoOk = true;
             mediaPlayer = null;
             Media media = new Media(fileName.toURI().toString());
             System.out.println("Play video: " + fileName.toURI().toString());
@@ -249,13 +263,11 @@ public class AddBarcodeFormController implements Initializable {
             videoPane.getChildren().add(mediaView);
             mediaView.setFitWidth(videoPane.getMaxWidth());
             mediaView.setFitWidth(videoPane.getMaxHeight());
-            mediaPlayer.setOnError(new Runnable()
-                {
-                    public void run()
-                    {
-                        setUnSupportedVideo();
-                    }
-                });
+            mediaPlayer.setOnError(new Runnable() {
+                public void run() {
+                    setUnSupportedVideo();
+                }
+            });
             mediaPlayer.setOnReady(new Runnable() {
 
                 @Override
@@ -265,25 +277,23 @@ public class AddBarcodeFormController implements Initializable {
                 }
             });
             System.out.println("Media player status: " + mediaPlayer.getStatus().toString());
-            } catch (MediaException ex) {
+        } catch (MediaException ex) {
             setUnSupportedVideo();
             System.out.println("Media player exception: " + ex.getMessage());
         }
-        }
-
-    
+    }
 
     private void setUnSupportedVideo() {
         videoPane.getChildren().clear();
         Label notSupportedVideo = new Label(" Видео не поддерживается нажмите на кнопку конвертировать");
         videoPane.getChildren().add(notSupportedVideo);
-        videoOk=false;
+        videoOk = false;
     }
 
     private void stopVideo() {
         if (mediaPlayer != null && mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
             mediaPlayer.stop();
-           
+
         }
         videoPane.getChildren().clear();
     }
