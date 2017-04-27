@@ -27,6 +27,8 @@ public class SettingsFormController implements Initializable {
     @FXML
     private TextField ffmpegPathLabel;
     @FXML
+    private TextField ffmpegParams;
+    @FXML
     private Button closeButton;
     @FXML 
     private Button saveButton;
@@ -41,11 +43,13 @@ public class SettingsFormController implements Initializable {
         setings =new Settings();
         videoPathLabel.setText(setings.getVideoPath());
         ffmpegPathLabel.setText(setings.getFfmpegPath());
+        ffmpegParams.setText(setings.getFfmpegOptions());
     } 
     @FXML
     private void onSaveBattonClicked(ActionEvent event){
         setings.setFfmpegPath(ffmpegPathLabel.getText());
         setings.setVideoPath(videoPathLabel.getText());
+        setings.setFfmpegOptions(ffmpegParams.getText());
     }
     @FXML
     private void onCloseButtonClicked(ActionEvent event){
