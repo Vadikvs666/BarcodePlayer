@@ -87,13 +87,10 @@
          </children>
       </GridPane>
       <StackPane fx:id="videoPane" layoutX="60.0" layoutY="210.0" maxHeight="320.0" maxWidth="480.0" minHeight="320.0" minWidth="480.0" prefHeight="320.0" prefWidth="480.0" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="60.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="210.0" />
-      <HBox layoutX="189.0" layoutY="549.0" maxHeight="52.0" minHeight="41.0" prefHeight="41.0" prefWidth="580.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="549.0">
+      <HBox layoutX="189.0" layoutY="549.0" maxHeight="52.0" minHeight="41.0" prefHeight="41.0" prefWidth="580.0" spacing="10.0" AnchorPane.bottomAnchor="10.0"  AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="549.0">
          <children>
-            <Button fx:id="saveBarcodeButton" mnemonicParsing="false" onAction="#onSaveBarcodeButton" text="Сохранить" />
-            <Button fx:id="clearBarcodeButton" mnemonicParsing="false" onAction="#onClearBarcodeButton" text="Очистить">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
+            <Button fx:id="saveBarcodeButton" prefHeight="31.0" maxHeight="31.0" mnemonicParsing="false" onAction="#onSaveBarcodeButton" text="Сохранить" />
+            <Button fx:id="clearBarcodeButton" prefHeight="31.0"  maxHeight="31.0" mnemonicParsing="false" onAction="#onClearBarcodeButton" text="Очистить">
             </Button>
             <Button fx:id="settingsButton" maxHeight="31.0" maxWidth="94.0" minHeight="31.0" minWidth="94.0" mnemonicParsing="false" onAction="#onSettingsButton" prefHeight="31.0" prefWidth="94.0" text="Настройки" />
             <Button fx:id="convertButtons" maxHeight="31.0" maxWidth="133.0" minHeight="31.0" minWidth="133.0" mnemonicParsing="false" onAction="#onConvertButton" prefHeight="31.0" prefWidth="133.0" text="Конвертировать" />
