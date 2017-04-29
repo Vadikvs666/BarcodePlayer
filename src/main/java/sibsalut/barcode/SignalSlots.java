@@ -114,7 +114,7 @@ public class SignalSlots {
             conn = connections.find(sender, signal);
             if (conn != null) {
                 for (SignalConnectorStruct entry : conn) {
-                    System.out.println("emit signal: " + signal + " founded slot " + entry.getSlot());
+                    System.out.println("emit signal: " + signal + " founded slot " + entry.getSlot()+" Reciever: "+entry.getReciever().toString());
                     invokeSlot(entry.getReciever(), entry.getSlot());
                 }
             }else{
@@ -130,11 +130,17 @@ public class SignalSlots {
         try {
             Task task = new Task() {
                 @Override
-                protected Object call() throws Exception {
-                    Object[] args = new Object[]{};
-                    rec.getClass().getDeclaredMethod(slot).invoke(rec, args);
-                    System.out.println("invoke slot " + slot);
-                    return null;
+                protected Object call()  {
+                    try{
+                        Object[] args = new Object[]{};
+                        rec.getClass().getDeclaredMethod(slot).invoke(rec, args);
+                        String Msg="invoke slot " + slot+" Reciever: "+rec.toString();
+                        System.out.println(Msg);
+                    
+                    }catch(Exception ex){
+                        Logger.getLogger(SignalSlots.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                   return null; 
                 }
             };
             Platform.runLater(task);

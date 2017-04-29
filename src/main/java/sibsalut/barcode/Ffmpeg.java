@@ -55,7 +55,6 @@ public class Ffmpeg implements Runnable {
         };
         shell.setOptions(options);
         shell.execute();
-        shell.getOutPut();
         shell.getError();
         ss.emit(this, "complete");
     }

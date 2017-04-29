@@ -169,4 +169,7 @@ public class BarcodePlayer extends Stage {
         setScene(scene);
 
     }
+    protected void closePlayer(){
+        close();
+    }
 }
