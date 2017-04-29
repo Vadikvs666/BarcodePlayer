@@ -93,7 +93,7 @@ public class AddBarcodeFormController implements Initializable {
 
     @FXML
     private void onConvertButton() {
-
+        if(barcodeTextField.getText()!=""){
         File file = new File(fileNameLabel.getText());
         String newFileName = settings.getVideoPath() + File.separator + barcodeTextField.getText() + ".mp4";
         fileNameLabel.setText(newFileName);
@@ -102,13 +102,20 @@ public class AddBarcodeFormController implements Initializable {
         ff.start();
         videoOk = true;
         setChanged();
+        }else
+        {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK);
+            alert.setTitle("Закрыть?");
+            alert.setHeaderText("Отсканируйте штрих-код и выберите видео файл!");
+            alert.showAndWait();
+        }
     }
 
     protected void slotOnFgmpegComplete(String barcode, String dest,String place) {
        Barcode b=base.selectByBarcode(barcode);
        Alert alert = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK);
             alert.setTitle("Успех");
-            alert.setHeaderText("Конвертация файла "+dest+" с штрих кодом \n"
+            alert.setHeaderText("Конвертация файла "+dest+" с штрих кодом: "
                     + barcode+" \n"
                     + " завершена успешно. Файл сохранен: "+place+".\n"
                     +" Если Вы его еще не сохранили штрих код Нажмите кнопку Сохранить");
