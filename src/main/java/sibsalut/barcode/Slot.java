@@ -15,22 +15,27 @@ import java.util.logging.Logger;
  * @author vadim
  */
 public class Slot {
-    private Method func;
-    public Slot(Method func){
+    private String func;
+    private SignalSlots ss= SignalSlots.getInstance();
+    private Object owner;
+
+    public Object getOwner() {
+        return owner;
+    }
+    public Slot(String func){
         this.func=func;
     }
+    public Slot(Object owner,String func){
+        this.func=func;
+        this.owner=owner;
+    }
     public String get(){
-        return func.getName();
+        return func;
     }
-    public void invoke(Object[] args){
-        try {
-            func.invoke(args);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(Slot.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(Slot.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvocationTargetException ex) {
-            Logger.getLogger(Slot.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+    public void connect(Signal signal, Slot slot){
+        ss.connect(signal, owner,slot);
     }
+    
+   
 }

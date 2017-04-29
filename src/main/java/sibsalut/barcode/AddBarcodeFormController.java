@@ -68,6 +68,7 @@ public class AddBarcodeFormController implements Initializable {
     private Barcode barcode;
     private Boolean changed;
     private SignalSlots ss;
+    public Slot onEndConvert; 
 
     /**
      * Initializes the controller class.
@@ -79,7 +80,7 @@ public class AddBarcodeFormController implements Initializable {
         base = Database.getInstance();
         barcode = new Barcode();
         changed = false;
-        ss = SignalSlots.getInstance();
+        this.onEndConvert = new Slot(this,"slotOnFgmpegComplete");
     }
 
     @FXML
@@ -97,16 +98,21 @@ public class AddBarcodeFormController implements Initializable {
         String newFileName = settings.getVideoPath() + File.separator + barcodeTextField.getText() + ".mp4";
         fileNameLabel.setText(newFileName);
         Ffmpeg ff = new Ffmpeg(file, barcodeTextField.getText());
-        ss.connect(ff, "complete", this, "slotOnFgmpegComplete");
+        onEndConvert.connect(ff.complete,onEndConvert);
         ff.start();
         videoOk = true;
         setChanged();
     }
 
-    protected void slotOnFgmpegComplete() {
-        File file = new File(fileNameLabel.getText());
-        playVideo(file);
-        System.out.println("video ok");
+    protected void slotOnFgmpegComplete(String barcode, String dest,String place) {
+       Barcode b=base.selectByBarcode(barcode);
+       Alert alert = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK);
+            alert.setTitle("Успех");
+            alert.setHeaderText("Конвертация файла "+dest+" с штрих кодом \n"
+                    + barcode+" \n"
+                    + " завершена успешно. Файл сохранен: "+place+".\n"
+                    +" Если Вы его еще не сохранили штрих код Нажмите кнопку Сохранить");
+            alert.showAndWait();
     }
 
     @FXML

@@ -25,7 +25,7 @@ public class MainApp extends Application {
     private Button workModeButton;
     private Button settingsButton;
     private Button addBarcodeButton;
-    private SignalSlots ss =SignalSlots.getInstance();
+    private Signal close = new Signal();
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -43,6 +43,7 @@ public class MainApp extends Application {
         this.mainStage.setTitle("Сибирский салют");
         this.mainStage.setScene(scene);
         this.mainStage.show();
+
     }
 
     private void initBottomButtons() {
@@ -80,7 +81,7 @@ public class MainApp extends Application {
 
         File mediaFile = new File("skin.jpg");
         BarcodePlayer bp = new BarcodePlayer(mediaFile, true, false);
-        ss.connect(this, "close", bp, "closePlayer");
+        close.connect(close,bp.onClose);
         bp.show();
     }
 
@@ -92,7 +93,7 @@ public class MainApp extends Application {
         alert.setHeaderText("Вы действительно хотите закрыть программу?");
         alert.showAndWait().ifPresent(response -> {
             if (response == myYesButtonType) {
-                ss.emit(this, "close");
+                close.emit();
                 mainStage.close();
             }
         });

@@ -20,13 +20,13 @@ public class Ffmpeg implements Runnable {
     private final File file;
     private final String barcode;
     private Settings settings;
-    private SignalSlots ss;
+    public Signal complete=new Signal();
 
     public Ffmpeg(File inputFile, String code) {
         file = inputFile;
         barcode = code;
         settings = new Settings();
-        ss = SignalSlots.getInstance();
+       
     }
 
     public void start() {
@@ -56,7 +56,11 @@ public class Ffmpeg implements Runnable {
         shell.setOptions(options);
         shell.execute();
         shell.getError();
-        ss.emit(this, "complete");
+        complete.emit(new Object[]{barcode,file.getAbsolutePath(),newFileName});
+        deleteFile(dest);
+    }
+    public void deleteFile(File file){
+        file.delete();
     }
 
 }

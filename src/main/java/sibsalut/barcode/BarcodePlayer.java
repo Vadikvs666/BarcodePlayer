@@ -6,6 +6,8 @@
 package sibsalut.barcode;
 
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -39,16 +41,20 @@ public class BarcodePlayer extends Stage {
     private Settings settings;
     private Database base;
 
+    public Slot onClose ;
+
     public BarcodePlayer(File mediaFile, Boolean fullscreen, Boolean checkAdded) {
-        if (checkAdded) {
-            createPlayerToCheckVideo(mediaFile);
-        } else {
-            createPlayerToPlayBarcodes(mediaFile);
-        }
-        fullScreen = fullscreen;
-        setSceneSize();
-        settings = new Settings();
-        base = Database.getInstance();
+         if (checkAdded) {
+                createPlayerToCheckVideo(mediaFile);
+            } else {
+                createPlayerToPlayBarcodes(mediaFile);
+            }
+            fullScreen = fullscreen;
+            setSceneSize();
+            settings = new Settings();
+            base = Database.getInstance();
+            this.onClose = new Slot(this,"closePlayer");
+        
 
     }
 

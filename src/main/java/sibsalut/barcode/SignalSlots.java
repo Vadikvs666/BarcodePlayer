@@ -16,40 +16,32 @@ import javafx.concurrent.Task;
  */
 class SignalConnectorStruct {
 
-    private Object sender;
-    private Object reciever;
-    private String signal;
-    private String slot;
+    private Object executer;
 
-    public void setSender(Object sender) {
-        this.sender = sender;
+    public Object getExecuter() {
+        return executer;
     }
 
-    public void setReciever(Object reciever) {
-        this.reciever = reciever;
+    public void setExecuter(Object executer) {
+        this.executer = executer;
     }
+    private Signal signal;
+    private Slot slot;
+    
 
-    public void setSignal(String signal) {
+    public void setSignal(Signal signal) {
         this.signal = signal;
     }
 
-    public void setSlot(String slot) {
+    public void setSlot(Slot slot) {
         this.slot = slot;
     }
 
-    public Object getSender() {
-        return sender;
-    }
-
-    public Object getReciever() {
-        return reciever;
-    }
-
-    public String getSignal() {
+    public Signal getSignal() {
         return signal;
     }
 
-    public String getSlot() {
+    public Slot getSlot() {
         return slot;
     }
 }
@@ -66,10 +58,10 @@ class Connections {
         connects.remove(scs);
     }
 
-    public ArrayList<SignalConnectorStruct> find(Object sen, String signal) {
+    public ArrayList<SignalConnectorStruct> find(Signal signal) {
         ArrayList<SignalConnectorStruct> list = new ArrayList<>();
         for (SignalConnectorStruct entry : connects) {
-            if (entry.getSender() == sen && entry.getSignal() == signal) {
+            if ( entry.getSignal() == signal) {
                 list.add(entry);
             }
         }
@@ -95,46 +87,50 @@ public class SignalSlots {
         return instance;
     }
 
-    public void connect(Object sender, String signal, Object reciever, String slot) {
+    public void connect(Signal signal,Object executer, Slot slot) {
         if (connections == null) {
             connections = new Connections();
         }
         SignalConnectorStruct connector = new SignalConnectorStruct();
-        connector.setSender(sender);
         connector.setSignal(signal);
-        connector.setReciever(reciever);
+        connector.setExecuter(executer);
         connector.setSlot(slot);
-        System.out.println("Connect signal: " + signal + " with slot " + slot);
+        System.out.println("Connect signal:  with slot " + slot.get());
         connections.add(connector);
     }
 
-    public void emit(Object sender, String signal) {
+    public void emit(Signal signal, Object[] args) {
         ArrayList<SignalConnectorStruct> conn = new ArrayList();
         if (connections != null) {
-            conn = connections.find(sender, signal);
+            conn = connections.find(signal);
             if (conn != null) {
                 for (SignalConnectorStruct entry : conn) {
-                    System.out.println("emit signal: " + signal + " founded slot " + entry.getSlot()+" Reciever: "+entry.getReciever().toString());
-                    invokeSlot(entry.getReciever(), entry.getSlot());
+                    invokeSlot(entry.getSlot(),entry.getExecuter(), args);
                 }
             }else{
-               System.out.println("emit signal: " + signal + " no slot founds " ); 
+               System.out.println("emit signal: " + signal.toString() + " no slot founds " ); 
             }
         }else{
-            System.out.println("emit signal: " + signal + "No connects");
+            System.out.println("emit signal: " + signal.toString() + "No connects");
         }
 
     }
 
-    private void invokeSlot(Object rec, String slot) {
+    private void invokeSlot( Slot slot,Object executer,Object[] args) {
         try {
             Task task = new Task() {
                 @Override
                 protected Object call()  {
                     try{
-                        Object[] args = new Object[]{};
-                        rec.getClass().getDeclaredMethod(slot).invoke(rec, args);
-                        String Msg="invoke slot " + slot+" Reciever: "+rec.toString();
+                        Class[] cArg = new Class[args.length];
+                        int i=0;
+                        for(Object arg : args){
+                            cArg[i]=arg.getClass();
+                            i++;
+                        }
+                        executer.getClass().getDeclaredMethod(slot.get(),cArg).setAccessible(true);
+                        executer.getClass().getDeclaredMethod(slot.get(),cArg).invoke(executer, args);
+                        String Msg="invoke slot " + slot.get();
                         System.out.println(Msg);
                     
                     }catch(Exception ex){
@@ -149,4 +145,7 @@ public class SignalSlots {
         }
 
     }
+
+ 
+  
 }
